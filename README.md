@@ -5,93 +5,84 @@ A full end-to-end DevOps pipeline for a microservices **Trello-like application*
 ---
 
 ## 🏗️ Project Overview
-
 This system automates the complete software lifecycle — from code commit to production deployment — using modern DevOps tools and cloud services.
 
 **Tech Stack**
-- **CI/CD:** Jenkins · GitHub Actions · Docker · ECR
-- **Orchestration:** Kubernetes (EKS) · Helm · ArgoCD
-- **Infrastructure:** Terraform (VPC, EKS, IAM, ALB)
+- **CI/CD:** Jenkins · GitHub Actions · Docker · ECR  
+- **Orchestration:** Kubernetes (EKS) · Helm · ArgoCD  
+- **Infrastructure:** Terraform (VPC, EKS, IAM, ALB)  
 - **Languages:** Python · React · YAML · HCL
 
 ---
 
 ## 📊 Architecture Diagram
-
-<img width="1896" height="680" alt="diagram-architechture" src="https://github.com/user-attachments/assets/06ef7d86-a66d-44df-a509-ac1e5e203eda" />
-
+<img src="https://github.com/user-attachments/assets/06ef7d86-a66d-44df-a509-ac1e5e203eda" alt="architecture" width="1000" />
 
 ---
 
 ## 🚀 Workflow Summary
-
-1. **Code push →** triggers GitHub Actions / Jenkins pipeline  
-2. **Build & Test →** Docker image built and unit-tested  
-3. **Push →** image uploaded to AWS ECR  
-4. **Deploy →** ArgoCD syncs Helm chart to AWS EKS
+[GitHub Commit]
+↓
+[Build & Unit Tests]
+↓
+[Docker Build & Push → ECR]
+↓
+[Helm Deploy → EKS]
+↓
+[ArgoCD Sync]
 
 ---
 
 ## 📁 Repository Breakdown
-
 | Repository | Description | Status |
-|-------------|-------------|---------|
-| 🔹 **[Trello-App](https://github.com/NoaVaturi/Trello-App.git)** | Backend + Frontend source, Dockerfiles, unit tests, and GitHub Actions CI | *Private* |
-| 🔹 **[Trello-Cluster](https://github.com/NoaVaturi/Trello-Cluster.git)** | Helm charts and ArgoCD App-of-Apps configuration for staging & prod | *Private* |
-| 🔹 **[trello-Infrastructure](https://github.com/NoaVaturi/Trello-Infrastructure.git)** | Terraform code for AWS VPC, subnets, EKS, IAM, and ALB | *Private* |
+|---|---|---|
+| 🔹 **[Trello-App](https://github.com/NoaVaturi/Trello-App)** | Backend + Frontend source, Dockerfiles, unit tests, and GitHub Actions CI | 🔒 Private |
+| 🔹 **[Trello-Cluster](https://github.com/NoaVaturi/Trello-Cluster)** | Helm charts and ArgoCD App-of-Apps configuration for staging & prod | 🔒 Private |
+| 🔹 **[Trello-Infrastructure](https://github.com/NoaVaturi/Trello-Infrastructure)** | Terraform code for AWS VPC, subnets, EKS, IAM, and ALB | 🔒 Private |
 
-🧭 *Code is private due to sensitive credentials, but available for review upon request.*
+🧭 *Code is private due to sensitive credentials. Available for review upon request.*
 
 ---
 
-## 🧪 CI/CD Pipeline
+## 📸 Screenshots & Demo
 
-[GitHub Commit]
-      ↓
-[Build & Unit Tests]
-      ↓
-[Docker Build & Push → ECR]
-      ↓
-[Helm Deploy → EKS]
-      ↓
-[ArgoCD Sync]
+### ArgoCD UI (Deployed Apps)
+<img src="docs/argocd-ui.jpg" alt="ArgoCD UI" width="900" />
 
+### Running Application (Video)
+> Click the thumbnail to watch the demo.
+[<img src="docs/web-demo.jpg" alt="App demo thumbnail" width="900" />](docs/web.mp4)
 
+---
 
-📸 Screenshots
-ArgoCD UI (Deployed Apps)
-![argocd-ui](docs/argocd-ui.png)
+## ⚙️ Key Features
+- ✅ Fully automated CI/CD from commit to deployment  
+- ✅ Multi-environment setup (staging & production namespaces)  
+- ✅ Infrastructure-as-Code with reusable Terraform modules  
+- ✅ Helm + ArgoCD GitOps deployment model
 
-Running Application
-🎥 Demo Video
-[![Watch the demo](docs/web-demo.png)](docs/web.mp4)
+---
 
+## 🧠 Challenges & Learnings
+| Challenge | Solution |
+|---|---|
+| Keeping secrets safe across environments | K8s Secrets + AWS IAM roles instead of plaintext env vars |
+| ArgoCD sync errors on Helm charts | Restructured App-of-Apps with correct paths |
+| EKS context issues in Jenkins | kubeconfig + IAM role binding |
+| Terraform remote state conflicts | DynamoDB state lock |
 
+---
 
-⚙️ Key Features
-✅ Fully automated CI/CD from commit to deployment
-✅ Multi-environment setup (staging & production namespaces)
-✅ Infrastructure-as-Code with reusable Terraform modules
-✅ Helm + ArgoCD GitOps deployment model
-
-
-🧠 Challenges & Learnings
-| Challenge                                | Solution                                                       |
-| ---------------------------------------- | -------------------------------------------------------------- |
-| Keeping secrets safe across environments | Used K8s Secrets + AWS IAM roles instead of plaintext env vars |
-| ArgoCD sync errors on Helm charts        | Fixed by restructuring App-of-Apps with correct paths          |
-| EKS context issues in Jenkins            | Solved with kubeconfig and IAM role binding                    |
-| Terraform remote state conflicts         | Added DynamoDB lock for safe concurrent runs                   |
-
-
-📚 Related Template Repos  
+## 📚 Related Template Repos
 *(Coming soon – sanitized public versions of each module)*
 
+---
 
-🧩 Tools Used
-AWS · Docker · Kubernetes · Helm · ArgoCD · Terraform · Jenkins · GitHub Actions · Prometheus · Grafana · Python · React
+## 🧩 Tools Used
+AWS · Docker · Kubernetes · Helm · ArgoCD · Terraform · Jenkins · GitHub Actions · Python · React
 
+---
 
-🧑‍💻 Author
-Noa Vaturi
-💼 LinkedIn · 💻 GitHub
+## 🧑‍💻 Author
+**Noa Vaturi**  
+💼 [LinkedIn](https://linkedin.com/in/noavaturi) · 💻 [GitHub](https://github.com/NoaVaturi)
