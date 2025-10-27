@@ -16,8 +16,7 @@ This system automates the complete software lifecycle — from code commit to pr
 | **CI/CD** | Jenkins · GitHub Actions · Docker · ECR |
 | **Orchestration** | Kubernetes (EKS) · Helm · ArgoCD |
 | **Infrastructure** | Terraform (VPC, EKS, IAM, ALB) |
-| **Monitoring** | Prometheus · Grafana |
-| **Languages** | Python · React · YAML · HCL |
+| **Languages** | Python · JavaScript · YAML · HCL |
 
 ---
 
@@ -85,7 +84,7 @@ This system automates the complete software lifecycle — from code commit to pr
 ---
 
 ## 🧩 Tools Used
-`AWS` · `Docker` · `Kubernetes` · `Helm` · `ArgoCD` · `Terraform` · `Jenkins` · `GitHub Actions` · `Python` · `React`
+`AWS` · `Docker` · `Kubernetes` · `Helm` · `ArgoCD` · `Terraform` · `Jenkins` · `GitHub Actions` · `Python`
 
 ---
 
