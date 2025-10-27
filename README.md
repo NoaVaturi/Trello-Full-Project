@@ -13,7 +13,7 @@ This system automates the complete software lifecycle — from code commit to pr
 
 | Category | Technologies |
 |-----------|---------------|
-| **CI/CD** | Jenkins · GitHub Actions · Docker · ECR |
+| **CI/CD** | GitHub Actions · Docker · ECR |
 | **Orchestration** | Kubernetes (EKS) · Helm · ArgoCD |
 | **Infrastructure** | Terraform (VPC, EKS, IAM, ALB) |
 | **Languages** | Python · JavaScript · YAML · HCL |
@@ -39,10 +39,11 @@ This system automates the complete software lifecycle — from code commit to pr
 
 ## 📁 Repository Breakdown
 | Repository | Description | Visibility |
-|-------------|--------------|-------------|
-| 🔹 **[Trello-App](https://github.com/NoaVaturi/Trello-App)** | Backend + Frontend source, Dockerfiles, unit tests, and GitHub Actions CI | 🔒 Private |
-| 🔹 **[Trello-Cluster](https://github.com/NoaVaturi/Trello-Cluster)** | Helm charts and ArgoCD App-of-Apps configuration for staging & prod | 🔒 Private |
-| 🔹 **[Trello-Infrastructure](https://github.com/NoaVaturi/Trello-Infrastructure)** | Terraform code for AWS VPC, subnets, EKS, IAM, and ALB | 🔒 Private |
+|-------------|-------------|------------|
+| 🔹 **[Trello-App](https://github.com/NoaVaturi/Trello-App)** | App code (backend + frontend) with GitHub Actions CI (build, test, Docker, push to ECR; updates cluster chart tag) | 🔒 Private |
+| 🔹 **[Trello-Cluster](https://github.com/NoaVaturi/Trello-Cluster)** | Helm charts + ArgoCD App-of-Apps (backend, mongodb, nginx ingress) in the `trello-app` namespace | 🔒 Private |
+| 🔹 **[Trello-Infrastructure](https://github.com/NoaVaturi/Trello-Infrastructure)** | Terraform for AWS: VPC (public/private), EKS (managed node groups), IAM roles, ArgoCD bootstrap | 🔒 Private |
+
 
 🧭 *Code is private due to sensitive credentials but available for review upon request.*
 
@@ -62,7 +63,7 @@ This system automates the complete software lifecycle — from code commit to pr
 | Feature | Description |
 |----------|--------------|
 | ✅ CI/CD Automation | Full pipeline from code commit to Kubernetes deployment |
-| ✅ Multi-Environment Setup | Separate staging & production namespaces |
+| ✅ Environment-ready design | Current: single namespace; staging/prod planned |
 | ✅ Infrastructure-as-Code | Reusable Terraform modules for AWS resources |
 | ✅ GitOps Model | ArgoCD syncs deployments from Helm manifests |
 
@@ -72,9 +73,9 @@ This system automates the complete software lifecycle — from code commit to pr
 | Challenge | Solution |
 |------------|-----------|
 | Keeping secrets safe across environments | Used Kubernetes Secrets & AWS IAM roles instead of plaintext variables |
-| ArgoCD sync errors on Helm charts | Restructured App-of-Apps with proper chart paths |
-| EKS context issues in Jenkins | Integrated kubeconfig with IAM role assumption |
-| Terraform remote state conflicts | Implemented DynamoDB locking for concurrency safety |
+| GitOps structure with ArgoCD | Implemented the App-of-Apps pattern with correct chart paths and automatic sync |
+| EKS authentication for GitHub Actions | Configured AWS credentials via GitHub Actions to interact with EKS and kubectl |
+| Terraform state management | Currently local; plan to migrate to S3 backend with DynamoDB locking |
 
 ---
 
@@ -84,7 +85,7 @@ This system automates the complete software lifecycle — from code commit to pr
 ---
 
 ## 🧩 Tools Used
-`AWS` · `Docker` · `Kubernetes` · `Helm` · `ArgoCD` · `Terraform` · `Jenkins` · `GitHub Actions` · `Python`
+`AWS` · `Docker` · `Kubernetes` · `Helm` · `ArgoCD` · `Terraform` · `GitHub Actions` · `Python`
 
 ---
 
