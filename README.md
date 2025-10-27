@@ -53,8 +53,9 @@ This system automates the complete software lifecycle — from code commit to pr
 
 | Section | Preview |
 |----------|----------|
-| **ArgoCD UI (Deployed Apps)** | <img src="docs/argocd-ui.jpg" alt="ArgoCD UI" width="800" /> |
-| **Running Application** | <img src="docs/web-demo.jpg" alt="App UI" width="800" /><br>🎥 [**Watch Demo Video**](docs/web.mp4) |
+| **ArgoCD UI (Deployed Apps)** | ![argocd-ui](https://github.com/user-attachments/assets/fce78f8e-cff1-493f-a216-028203e65069) |
+| **Running Application** | <img width="1792" height="949" alt="web-prev" src="https://github.com/user-attachments/assets/b0456dd5-ad5f-492b-96e6-0a59ee70df67" /><br>🎥 [**Watch Demo Video**](docs/web.mp4) |
+
 
 ---
 
