@@ -91,4 +91,4 @@ This system automates the complete software lifecycle — from code commit to pr
 
 ## 👩‍💻 Author
 **Noa Vaturi**  
-💼 [LinkedIn](https://linkedin.com/in/noavaturi) · 💻 [GitHub](https://github.com/NoaVaturi)
+💼 [LinkedIn](https://linkedin.com/in/noa-vaturi) · 💻 [GitHub](https://github.com/NoaVaturi)
