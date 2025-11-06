@@ -1,0 +1,172 @@
+name: Trello App Backend CI/CD Workflow
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  backend-unit-tests:
+    runs-on: ubuntu-latest
+    outputs:
+      new_tag: ${{ steps.tag.outputs.new_tag }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get latest tag and increment PATCH version
+        id: tag
+        run: |
+          git fetch --tags || { echo "Git fetch failed"; exit 1; }
+          latest_tag=$(git tag | sort -V | tail -n 1)
+
+          if [ -z "$latest_tag" ]; then
+            new_tag="1.0.0"
+          else
+            major=$(echo "$latest_tag" | cut -d '.' -f 1)
+            minor=$(echo "$latest_tag" | cut -d '.' -f 2)
+            patch=$(echo "$latest_tag" | cut -d '.' -f 3)
+            patch=$((patch + 1))
+            new_tag="${major}.${minor}.${patch}"
+          fi
+
+          echo "New version tag: $new_tag"
+          echo "new_tag=$new_tag" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Python for backend
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Install backend dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/requirements.txt
+          pip install pytest
+
+      - name: Run backend unit tests
+        run: pytest test_backend.py
+        env:
+          FLASK_ENV: test
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+    needs: backend-unit-tests
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Export NEW_TAG from backend-unit-tests
+        run: echo "NEW_TAG=${{ needs.backend-unit-tests.outputs.new_tag }}" >> $GITHUB_ENV
+
+      - name: Set up Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/v2.24.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          docker-compose version
+
+      - name: Build and start services with Docker Compose
+        run: docker compose up -d --build --wait
+        env:
+          MONGO_ROOT_USERNAME: ${{ secrets.MONGO_ROOT_USERNAME }}
+          MONGO_ROOT_PASSWORD: ${{ secrets.MONGO_ROOT_PASSWORD }}
+          DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+
+      - name: Run E2E tests
+        env:
+          BACKEND_URL: http://localhost/api
+          FRONTEND_URL: http://localhost
+        run: |
+          pip install requests pytest
+          pytest e2e_tests.py
+
+      - name: Stop backend container
+        if: always()
+        run: docker compose down
+
+  push:
+    runs-on: ubuntu-latest
+    needs: [e2e-tests, backend-unit-tests]
+    steps:
+      - name: Checkout App Code
+        uses: actions/checkout@v4
+
+      - name: Export NEW_TAG
+        run: echo "NEW_TAG=${{ needs.backend-unit-tests.outputs.new_tag }}" >> $GITHUB_ENV
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Authenticate to ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and Push Backend Docker Image
+        run: |
+          docker build -t trello-backend:${NEW_TAG} ./backend
+          docker tag trello-backend:${NEW_TAG} ${{ secrets.APP_ECR_URI }}:backend-${NEW_TAG}
+          docker push ${{ secrets.APP_ECR_URI }}:backend-${NEW_TAG}
+       
+      # - name: Build and Push Nginx (frontend) Docker Image
+      #   run: |
+      #     docker build --no-cache --build-arg REACT_APP_API_URL=/api -t trello-nginx:${NEW_TAG} -f nginx/Dockerfile .
+      #     docker tag trello-nginx:${NEW_TAG} ${{ secrets.APP_ECR_URI }}:nginx-${NEW_TAG}
+      #     docker push ${{ secrets.APP_ECR_URI }}:nginx-${NEW_TAG}    
+
+      - name: Push Git tag
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git tag $NEW_TAG
+          git push origin $NEW_TAG
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [push, backend-unit-tests]
+    steps:
+     - name: Checkout App Code
+       uses: actions/checkout@v4
+
+     - name: Export NEW_TAG from backend-unit-tests
+       run: echo "NEW_TAG=backend-${{ needs.backend-unit-tests.outputs.new_tag }}" >> $GITHUB_ENV
+
+     - name: Configure Git
+       run: |
+        git config --global user.email "github-actions@github.com"
+        git config --global user.name "github-actions"
+
+     - name: Install yq
+       run: |
+        sudo wget https://github.com/mikefarah/yq/releases/download/v4.40.5/yq_linux_amd64 -O /usr/bin/yq
+        sudo chmod +x /usr/bin/yq
+
+     - name: Clone Trello-Cluster repo
+       env:
+        PAT: ${{ secrets.TRELLO_CLUSTER_REPO_PAT }}
+       run: |
+        git clone https://x-access-token:$PAT@github.com/NoaVaturi/Trello-Cluster.git trello-cluster
+
+     - name: Update backend image tag
+       run: |
+        pushd trello-cluster
+        echo "Updating backend image tag to ${NEW_TAG}"
+        yq e ".backend.image.tag = \"${NEW_TAG}\"" -i root/apps/backend/values.yaml
+        popd
+
+     - name: Commit and push changes
+       run: |
+        pushd trello-cluster
+        git add root/apps/backend/values.yaml root/apps/nginx/values.yaml
+
+        git commit -m "Update backend image and nginx ingress host to ${NEW_TAG} + ${HOST}"
+        git push origin main
+
+        popd
+
