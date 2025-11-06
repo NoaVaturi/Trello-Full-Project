@@ -1,0 +1,29 @@
+# Ignore everything in node_modules except what's needed for the build
+node_modules/
+
+# Ignore the build output directory from the Docker build context
+build/
+
+# Ignore .env files as they are handled via Docker Compose environment variables or build args
+.env
+.env.local
+
+# Git ignore files
+.git
+.gitignore
+
+# Logs and debug files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE and editor specific files
+.vscode/
+.idea/
+
+# Other temporary or unnecessary files
+*.tgz
+.DS_Store
+
+mongo-init.js

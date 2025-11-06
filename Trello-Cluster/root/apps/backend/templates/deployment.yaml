@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trello-backend
+spec:
+  replicas: {{ .Values.backend.replicaCount }}
+  selector:
+    matchLabels:
+      app: trello-backend
+  template:
+    metadata:
+      labels:
+        app: trello-backend
+    spec:
+      containers:
+      - name: trello-backend
+        image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+        ports:
+        - containerPort: 5000
+        env:
+        {{- if .Values.backend.env }}
+          {{- toYaml .Values.backend.env | nindent 10 }}
+        {{- end }}

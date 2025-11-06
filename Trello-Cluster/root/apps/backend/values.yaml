@@ -1,0 +1,26 @@
+backend:
+  image:
+    repository: 978482127148.dkr.ecr.ap-south-1.amazonaws.com/trello-app
+    tag: backend-1.0.26
+  replicaCount: 1
+  env:
+    - name: DATABASE_NAME
+      valueFrom:
+        configMapKeyRef:
+          name: mongodb-config
+          key: DATABASE_NAME
+    - name: MONGO_ROOT_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: mongodb-secret
+          key: MONGO_ROOT_USERNAME
+    - name: MONGO_ROOT_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: mongodb-secret
+          key: MONGO_ROOT_PASSWORD
+    - name: SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: backend-secret
+          key: SECRET_KEY

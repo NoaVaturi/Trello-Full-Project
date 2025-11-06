@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trello-nginx
+  namespace: trello-app
+  labels:
+    app: trello-nginx
+spec:
+  replicas: {{ .Values.nginx.replicaCount }}
+  selector:
+    matchLabels:
+      app: trello-nginx
+  template:
+    metadata:
+      labels:
+        app: trello-nginx
+    spec:
+      containers:
+        - name: trello-nginx
+          image: {{ .Values.nginx.image | quote }}
+          env:
+            - name: BACKEND_HOST
+              value: {{ .Values.nginx.env.backendHost | quote }}
+          ports:
+            - containerPort: 80
