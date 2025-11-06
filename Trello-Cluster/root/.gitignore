@@ -1,4 +1,0 @@
-**/secrets/
-Trello-Cluster/root/cluster-config/manifests/secrets/
-**/*secrets.yaml
-github-creds.yaml
