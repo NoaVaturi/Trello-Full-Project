@@ -38,8 +38,8 @@ This system automates the complete software lifecycle — from code commit to pr
 ---
 
 ## 📁 Repository Breakdown
-| Repository | Description | Visibility |
-|-------------|-------------|------------|
+| Repository | Description |
+|-------------|-------------|
 | 🔹 **[Trello-App](https://github.com/NoaVaturi/Trello-Full-Project/tree/main/Trello-App)** | App code (backend + frontend) with GitHub Actions CI (build, test, Docker, push to ECR; updates cluster chart tag)
 | 🔹 **[Trello-Cluster](https://github.com/NoaVaturi/Trello-Full-Project/tree/main/Trello-Cluster)** | Helm charts + ArgoCD App-of-Apps (backend, mongodb, nginx ingress) in the `trello-app` namespace
 | 🔹 **[Trello-Infrastructure](https://github.com/NoaVaturi/Trello-Full-Project/tree/main/Trello-Infrastructure)** | Terraform for AWS: VPC (public/private), EKS (managed node groups), IAM roles, ArgoCD bootstrap
