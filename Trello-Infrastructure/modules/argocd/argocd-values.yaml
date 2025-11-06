@@ -1,0 +1,18 @@
+server:
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: false
+  env:
+    - name: ARGOCD_EXEC_TIMEOUT
+      value: "2m30s"
+
+controller:
+  replicaCount: 1
+
+configs:
+  params:
+    server.insecure: true
+
+image:
+  tag: v2.11.0    
